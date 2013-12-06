@@ -21,7 +21,16 @@ package {
 		
 		// set up grid and start game
 		public function Tiles():void {
-			
+			this.addEventListener(flash.events.Event.ADDED_TO_STAGE, onAddedToStage);
+		}
+		
+		protected function onAddedToStage(event:Event):void
+		{
+			startTiles();
+		}
+		
+		private function startTiles():void
+		{
 			// create grid array
 			grid = new Array();
 			for(var gridrows:int=0;gridrows<8;gridrows++) {
@@ -40,7 +49,6 @@ package {
 			scoreDisplay = new TextField();
 			addChild(scoreDisplay);
 			scoreDisplay.text = "0";
-			
 		}
 		
 		public function setUpGrid():void {
@@ -48,7 +56,7 @@ package {
 			while (true) {
 				// create sprite
 				gameSprite = new Sprite();
-				
+				trace('setting up grid');
 				// add 64 random pieces
 				for(var col:int=0;col<8;col++) {
 					for(var row:int=0;row<8;row++) {
@@ -65,7 +73,6 @@ package {
 				// no matches, but possibles exist: good board found
 				break;
 			} 
-			
 			// add sprite
 			addChild(gameSprite);
 		}
@@ -361,7 +368,7 @@ package {
 		
 		public function addScore(numPoints:int):void {
 			gameScore += numPoints;
-			scoreDisplay.text = String(gameScore);
+		//	scoreDisplay.text = String(gameScore);
 		}
 		
 		public function endGame():void {
