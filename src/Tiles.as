@@ -1,4 +1,6 @@
 package {
+	import asset.Asset;
+	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.text.*;
@@ -76,8 +78,7 @@ package {
 			// add sprite
 			addChild(gameSprite);
 		}
-		
-		// create a random piece, add to sprite and grid
+
 		public function addPiece(col:int,row:int):Piece {
 			var newPiece:Piece = new Piece();
 			newPiece.x = col*spacing+offsetX;
@@ -131,6 +132,7 @@ package {
 		
 		// start animated swap of two pieces
 		public function makeSwap(piece1:Piece,piece2:Piece):void {
+			trace('swapping ' + piece1.type + ' and ' + piece2.type);
 			swapPieces(piece1,piece2);
 			
 			// check to see if move was fruitful
@@ -143,6 +145,7 @@ package {
 		
 		// swap two pieces
 		public function swapPieces(piece1:Piece,piece2:Piece):void {
+			trace(piece1.name + ' is piece 1 name ' + piece2.name + ' is piece 2 name');
 			// swap row and col values
 			var tempCol:uint = piece1.col;
 			var tempRow:uint = piece1.row;
@@ -368,7 +371,7 @@ package {
 		
 		public function addScore(numPoints:int):void {
 			gameScore += numPoints;
-		//	scoreDisplay.text = String(gameScore);
+			scoreDisplay.text = String(gameScore);
 		}
 		
 		public function endGame():void {

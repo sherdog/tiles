@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://www.codeandweb.com/texturepacker-->
+<!-- $TexturePacker:SmartUpdate:0b9458b671734c7d2a4f14f91b4faa6f:e84d4c5f78bbe8535dc8984464b294ab:fad3f7931d57518f968fbbc3c425ba5a$ -->
+<TextureAtlas imagePath="SwfAssets.png">
+    <SubTexture name="shared/0000" x="2" y="2" width="306" height="58" frameX="-137" frameY="-12" frameWidth="550" frameHeight="400"/>
+</TextureAtlas>

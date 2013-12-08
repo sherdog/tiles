@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<levels>
+	<level>
+		<name>Level 1</name>
+		<levelBackground>background1.png</levelBackground>
+		<rows>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+		</rows>
+		<blocks>1,2,3,4,5,6</blocks>
+		<multiplier>1</multiplier>
+		<mode>time</mode>
+		<time>3.00</time>
+		<score>40000</score>
+		<getItems>
+			<item>3:4</item>
+		</getItems>
+	</level>
+	<level>
+		<name>Level 2</name>
+		<levelBackground>background2.png</levelBackground>
+		<rows>
+			<row>0,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>0,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+			<row>1,1,1,1,1,1,1,1</row>
+		</rows>
+		<blocks>1,2,3,4,5,6</blocks>
+		<multiplier>1</multiplier>
+		<mode>time</mode>
+		<time>2:30</time>
+		<score>0</score>
+	</level>
+</levels>
