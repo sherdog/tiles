@@ -97,7 +97,7 @@ package {
 		// player clicks on a piece
 		public function clickPiece(event:MouseEvent):void {
 			var piece:Piece = Piece(event.currentTarget);
-			
+			trace("Clicked type is: " + piece.type);
 			// first one selected
 			if (firstPiece == null) {
 				piece.select.visible = true;
