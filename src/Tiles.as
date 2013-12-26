@@ -3,15 +3,49 @@ package {
 	
 	import flash.display.*;
 	import flash.events.*;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	import flash.text.*;
 	import flash.utils.Timer;
 	
 	public class Tiles extends MovieClip {
 		// constants
+		private var _level:LevelLoader;
+		public static var stage:Stage;
+		
+		private var player:Player;
+		private var _player:Object;
+		private var _playerID:int;
+		private var _playerLevel:int;
+		private var _playerName:String;
+		private var _playerDOB:String;
+		private var _facebookID:int;
+		private var _accessToken:String;
+		private var _playerXP:int;
+		private var _playerLives:int = 0;
+		
+		private var _serverURL:String;
+		private var _cdnURL:String;
+		
+		//$$$$$$
+		private var _totalPurchases:int;
+		
+		private var _version:String = "1";
+		
 		private const numPieces:uint = 7;
 		private const spacing:Number = 45;
 		private const offsetX:Number = 120;
 		private const offsetY:Number = 30;
+		
+		/*FONTS*/
+		[Embed(source="../assets/fonts/badabb.TTF",
+		fontName = "BADABB",
+		mimeType = "application/x-font",
+		fontWeight="normal",
+		fontStyle="normal",
+		advancedAntiAliasing="true",
+		embedAsCFF="false")]
+		private var mainFont:Class;
 		
 		// game grid and mode
 		private var grid:Array;
@@ -21,14 +55,129 @@ package {
 		private var gameScore:int;
 		private var scoreDisplay:TextField;
 		
-		// set up grid and start game
+		[SWF(backgroundColor="0xFFFFFF" , width="760" , height="900")]
+		
 		public function Tiles():void {
-			this.addEventListener(flash.events.Event.ADDED_TO_STAGE, onAddedToStage);
+			init();
 		}
 		
+		public function init():void
+		{
+			trace('start tiles');
+			Tiles.stage = stage;
+			this.addEventListener(flash.events.Event.ADDED_TO_STAGE, onAddedToStage);
+		}
+	
+		public function cleanUp():void
+		{
+			trace('cleanup called');
+		}
 		protected function onAddedToStage(event:Event):void
 		{
+			
+			//Load flash vars
+			loadFlashVars();
+			loadPlayerData();
+			setupUI();	
+			this.removeEventListener(flash.events.Event.ADDED_TO_STAGE, onAddedToStage);
+		}
+		
+		private function setupUI():void
+		{
+			
+			var scoreText:TextFormat = new TextFormat("BADABB", 30);
+			
+			var t:TextField 		= new TextField;
+			t.embedFonts 			= true;
+			t.autoSize 				= TextFieldAutoSize.LEFT;
+			t.name					= "scoreText";
+			t.defaultTextFormat 	= scoreText;
+			t.text 					= "Score: " + _playerXP;
+			
+			this.addChild(t);
+			
+			var levelText:TextFormat = new TextFormat("BADABB", 30);
+			
+			var t2:TextField 		= new TextField();
+			t2.embedFonts			= true;
+			t2.name					= "levelText";
+			t2.autoSize				= TextFieldAutoSize.LEFT;
+			t2.defaultTextFormat	= levelText;
+			t2.text					= "Level: " + _playerLevel;
+			
+			this.addChild(t2);
+			
+			t2.x = stage.stageWidth - 160;
+			this.parent.setChildIndex(this, 0);
+			trace('this.parent.numChildren - 1 = ' + (this.numChildren - 1));
+		}
+		
+		private function loadPlayerData():void
+		{
+			//Load player datas
+			var loader:URLLoader = new URLLoader();
+			var request:URLRequest = new URLRequest();
+			
+			var playerDataUrl:String = _serverURL + 'player/' + _playerID;
+			trace('player data url: ' +  playerDataUrl);
+			request.url = playerDataUrl;
+			loader.addEventListener(Event.COMPLETE, onPlayerLoaderComplete);
+			loader.load(request);
+			trace('loaded player data');
+			
+		}
+		
+		private function nowStartGame():void
+		{
+			//player data loaded now we can start the screen n shit.
 			startTiles();
+			testPlayerObject();
+			
+		}
+		
+		private function startGame():void
+		{
+			_level = new LevelLoader();
+			_level.loadLevel(1);
+			this.addChild(_level);
+			
+			_level.x = 10;
+			_level.y = 0;
+			
+		}
+		
+		//Save the player object
+		protected function onPlayerLoaderComplete(event:Event):void
+		{
+			trace('made it to onplayerLoaderComplete');
+			var loader:URLLoader = URLLoader(event.target);
+			var response:Object = JSON.parse(loader.data);
+			
+			_playerName = response.player[0].player_name;
+			_facebookID = response.player[0].facebook_id;
+			_playerDOB = response.player[0].dob;
+			_playerLevel = response.player[0].level;
+			_playerXP = response.player[0].xp;
+			
+			nowStartGame();
+		}
+		
+		private function loadFlashVars():void
+		{
+			var obj:Object = stage.loaderInfo.parameters;
+			
+			//set game variables from flash vars
+			_serverURL  = obj.serverURL;
+			_cdnURL = obj.cdnURL;
+			_playerID = obj.player_id;
+			
+			trace('loaded flash vars');
+			
+		}
+		
+		private function testPlayerObject():void
+		{
+			trace('testing player object, the player name is: ' + _playerName + ' on level: ' + _playerLevel);
 		}
 		
 		private function startTiles():void
@@ -74,11 +223,13 @@ package {
 				
 				// no matches, but possibles exist: good board found
 				break;
-			} 
+			}
 			// add sprite
 			addChild(gameSprite);
+			gameSprite.y = 40;
+			gameSprite.x = 0;
 		}
-
+		
 		public function addPiece(col:int,row:int):Piece {
 			var newPiece:Piece = new Piece();
 			newPiece.x = col*spacing+offsetX;
@@ -316,7 +467,7 @@ package {
 		// look to see if a possible move is on the board
 		public function lookForPossibles():Boolean {
 			for(var col:int=0;col<8;col++) {
-				for(var  row:int=0;row<8;row++) {
+				for(var row:int=0;row<8;row++) {
 					
 					// horizontal possible, two plus one
 					if (matchPattern(col, row, [[1,0]], [[-2,0],[-1,-1],[-1,1],[2,-1],[2,1],[3,0]])) {
@@ -371,7 +522,9 @@ package {
 		
 		public function addScore(numPoints:int):void {
 			gameScore += numPoints;
-			scoreDisplay.text = String(gameScore);
+			
+			var scoreText:TextField = this.getChildByName("scoreText") as TextField;
+			scoreText.text = "Score: " + gameScore.toString();
 		}
 		
 		public function endGame():void {
@@ -381,11 +534,7 @@ package {
 			gotoAndStop("gameover");
 		}
 		
-		public function cleanUp():void {
-			grid = null;
-			removeChild(gameSprite);
-			gameSprite = null;
-			removeEventListener(Event.ENTER_FRAME,movePieces);
-		}
+
 	}
+		
 }
